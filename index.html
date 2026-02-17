@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drill Machine: Grammar Practice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+         #correctAnswerDisplay {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #correctAnswerDisplay.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200">
+
+<div class="main-app-container dark:bg-gray-800">
+    <header class="tab-nav flex justify-between items-center pr-4">
+        <div class="flex">
+            <button type="button" id="builderTabButton" class="tab-button active" data-target="builderTabContent">Builder</button>
+            <button type="button" id="playerTabButton" class="tab-button" data-target="drillTabContent">Drill Player</button>
+        </div>
+        <button id="darkModeToggle" class="text-xl p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" title="Toggle Dark Mode">
+            ☀️
+        </button>
+    </header>
+
+    <div>
+        <main id="builderTabContent" class="tab-content builder-container">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Drill Builder: Sentence Practice</h1>
+            <form id="drillBuilderForm">
+                <section class="section">
+                    <h2 class="section-title dark:text-gray-200">1. Select Tense</h2>
+                    <div>
+                        <input type="radio" id="tense_simple_present" name="tense" value="simple_present" checked required>
+                        <label for="tense_simple_present" class="radio-label dark:text-gray-300">Simple Present</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="tense_simple_past" name="tense" value="simple_past" required>
+                        <label for="tense_simple_past" class="radio-label">Simple Past</label>
+                    </div>
+                </section>
+
+                <section class="section hidden" id="sentenceStructureSection">
+                    <h2 class="section-title">2. Select Sentence Structure (Contextual)</h2>
+                    <div>
+                        <input type="radio" id="struct_default" name="structureType" value="default_verb_structure" checked required>
+                        <label for="struct_default" class="radio-label">Default (Subject-Verb-Complement)</label>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h2 class="section-title dark:text-gray-200">2. Subject Pronouns (One item per line)</h2>
+                    <div class="word-input-group">
+                        <textarea id="subjectPronouns" rows="7" class="dark:bg-gray-700 dark:text-white dark:border-gray-600" required>I
+You
+He
+She
+It
+We
+They</textarea>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h2 class="section-title dark:text-gray-200">3. Verb Entries</h2>
+                    <div id="verbEntriesContainer">
+                        <!-- Verb entry blocks will be added here by JS -->
+                    </div>
+                    <button type="button" id="addVerbEntryButton" class="add-verb-button mt-2">Add Verb Entry</button>
+                </section>
+
+
+                <!-- HIDE 'TO BE' SPECIFIC LISTS (OLD - should not be needed if JS correctly hides them) -->
+                <div id="oldWordInputs" class="hidden">
+                    <div class="word-input-group hidden" data-structure="adjective">
+                        <label for="adjectives">Adjectives:</label>
+                        <textarea id="adjectives" rows="5"></textarea>
+                    </div>
+                    <div class="word-input-group hidden" data-structure="noun_phrase">
+                        <label for="nounPhrases">Noun Phrases (Include 'a/an' if needed):</label>
+                        <textarea id="nounPhrases" rows="5"></textarea>
+                    </div>
+                    <div class="word-input-group hidden" data-structure="origin">
+                        <label for="origins">Origins (Countries, Cities, etc.):</label>
+                        <textarea id="origins" rows="5"></textarea>
+                    </div>
+                    <div class="word-input-group hidden" data-structure="location_at">
+                        <label for="locations_at">Locations (Places that usually take 'at', e.g., home, work, the park):</label>
+                        <textarea id="locations_at" rows="5"></textarea>
+                    </div>
+                     <div class="word-input-group hidden" data-structure="location_in">
+                        <label for="locations_in">Locations (Places/Containers that usually take 'in', e.g., the bedroom, the car, London):</label>
+                        <textarea id="locations_in" rows="5"></textarea>
+                    </div>
+                </div>
+
+
+                <section class="section">
+                    <h2 class="section-title dark:text-gray-200">4. Drill Settings</h2>
+                    <div>
+                        <p class="mb-2 font-medium text-gray-700 dark:text-gray-300">Allowed Sentence Types:</p>
+                        <input type="checkbox" id="type_affirmative" name="sentenceType" value="affirmative" checked>
+                        <label for="type_affirmative" class="checkbox-label dark:text-gray-300">Affirmative</label>
+                        <input type="checkbox" id="type_negative" name="sentenceType" value="negative" checked>
+                        <label for="type_negative" class="checkbox-label dark:text-gray-300">Negative</label>
+                        <input type="checkbox" id="type_interrogative" name="sentenceType" value="interrogative" checked>
+                        <label for="type_interrogative" class="checkbox-label dark:text-gray-300">Question</label>
+                    </div>
+                     <div class="mt-4">
+                        <p class="mb-2 font-medium text-gray-700 dark:text-gray-300">Auditory Cue Type:</p>
+                        <input type="radio" id="cue_full_gap" name="auditoryCueType" value="full_gap" checked>
+                        <label for="cue_full_gap" class="radio-label dark:text-gray-300">Full Prompt with Gap (e.g., "She [BEEP] TV")</label><br>
+                        <input type="radio" id="cue_partial" name="auditoryCueType" value="partial">
+                        <label for="cue_partial" class="radio-label dark:text-gray-300">Partial Cue (e.g., "She ... TV")</label><br>
+                        <input type="radio" id="cue_visual_only" name="auditoryCueType" value="visual_only">
+                        <label for="cue_visual_only" class="radio-label dark:text-gray-300">Visual Prompts Only (with "Speak Now" audio)</label>
+                    </div>
+                    <div class="mt-4">
+                        <input type="checkbox" id="useContractions" name="useContractions" checked>
+                        <label for="useContractions" class="checkbox-label dark:text-gray-300">Use contractions in model answers (don't, doesn't)</label>
+                    </div>
+                    <div class="mt-4">
+                        <label for="delaySeconds" class="dark:text-gray-300">Student Speaking Time / Auto-Advance Delay (seconds):</label>
+                        <input type="number" id="delaySeconds" value="7" min="3" class="input-number dark:bg-gray-700 dark:text-white dark:border-gray-600" required>
+                    </div>
+                    <div class="mt-4">
+                        <label for="numRounds" class="dark:text-gray-300">Number of Rounds:</label>
+                        <input type="number" id="numRounds" value="15" min="1" class="input-number dark:bg-gray-700 dark:text-white dark:border-gray-600" required>
+                    </div>
+                    <div class="mt-4">
+                        <input type="checkbox" id="requireTypedInput" name="requireTypedInput" >
+                        <label for="requireTypedInput" class="checkbox-label">Show typed input area (optional)</label>
+                    </div>
+                </section>
+                <button type="submit" class="button-submit">Save Drill Configuration</button>
+                <div id="statusMessage" class="status-message" aria-live="polite"></div>
+            </form>
+        </main>
+
+        <main id="drillTabContent" class="tab-content player-container hidden">
+             <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Listen & Speak Drill</h1>
+             <div id="levelIndicator" class="level-indicator dark:text-gray-300" aria-live="polite">Loading Configuration...</div>
+             <div id="audioCueStatus" class="min-h-[1.5rem] dark:text-blue-400" aria-live="polite"></div>
+
+            <div class="controls-area grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 items-center">
+                <div class="text-center md:text-left">
+                    <label class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Model Voice:</label>
+                    <div class="flex flex-wrap justify-center md:justify-start gap-x-4 gap-y-1">
+                        <div>
+                            <input type="radio" id="voice_us_female" name="ttsVoice" value="us_female" checked>
+                            <label for="voice_us_female" class="voice-selection-label dark:text-gray-300">US Female</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="voice_us_male" name="ttsVoice" value="us_male">
+                            <label for="voice_us_male" class="voice-selection-label dark:text-gray-300">US Male</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="voice_uk_female" name="ttsVoice" value="uk_female">
+                            <label for="voice_uk_female" class="voice-selection-label dark:text-gray-300">UK Female</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="voice_uk_male" name="ttsVoice" value="uk_male">
+                            <label for="voice_uk_male" class="voice-selection-label dark:text-gray-300">UK Male</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center md:text-right">
+                    <label for="speechRateSlider" class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Speech Speed:</label>
+                    <input type="range" id="speechRateSlider" min="0.5" max="2" value="1" step="0.1" class="align-middle">
+                    <span id="speechRateValue" class="ml-2 text-sm text-gray-600 inline-block align-middle dark:text-gray-400">1.0x</span>
+                </div>
+            </div>
+
+            <div id="countdownContainer" class="flex items-center justify-center mb-6 max-w-md mx-auto hidden">
+                <img src="images/stopwatch.png" alt="Timer" class="h-8 w-8 mr-3">
+                <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                    <div id="countdownBar" class="bg-blue-500 h-4 rounded-full transition-all ease-linear" style="width: 100%"></div>
+                </div>
+            </div>
+
+             <div id="promptsContainer" class="prompts-container">
+                 <span id="promptPronoun" class="prompt pronoun-prompt hidden"></span>
+                 <span id="promptVerb" class="prompt verb-prompt hidden"></span>
+                 <span id="promptType" class="prompt type-prompt hidden"></span>
+                 <span id="promptComplement" class="prompt complement-prompt hidden"></span>
+             </div>
+
+             <div id="correctAnswerDisplay" class="my-4 min-h-[2.5em] hidden" aria-live="polite">
+             </div>
+
+             <div id="modelListeningArea" class="hidden">
+                 <button type="button" id="listenModelButton" class="button bg-sky-500 hover:bg-sky-600 py-3 px-6 text-base" disabled>
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2 -mt-1" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                         <path d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM12.293 7.293a1 1 0 011.414 0L15 8.586l1.293-1.293a1 1 0 111.414 1.414L16.414 10l1.293 1.293a1 1 0 01-1.414 1.414L15 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L13.586 10l-1.293-1.293a1 1 0 010-1.414z" />
+                     </svg>
+                     Listen to Model Sentence
+                 </button>
+                 <p id="pronunciationError" class="error-message hidden" aria-live="assertive"></p>
+             </div>
+
+             <div id="studentInputArea" class="mt-6 hidden">
+                <label for="studentAnswerInput" class="font-medium text-gray-700 dark:text-gray-300">Optional: Type what you heard/said</label>
+                <input type="text" id="studentAnswerInput" placeholder="Type your answer here..."
+                       class="mt-1 w-full max-w-md mx-auto p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                <button type="button" id="submitAnswerButton" class="button mt-3 bg-indigo-600 hover:bg-indigo-700">Check Typed Answer</button>
+             </div>
+             <div id="typedAnswerFeedback" class="mt-3 min-h-[1.5rem]" aria-live="polite"></div>
+
+            <div class="button-container mt-8">
+                <button type="button" id="startButton" class="button" disabled>Start Drill</button>
+                <button type="button" id="pauseDrillButton" class="button bg-yellow-500 hover:bg-yellow-600 hidden">Pause Drill</button>
+                <button type="button" id="nextRoundButton" class="button bg-teal-500 hover:bg-teal-600 hidden">Next Round</button>
+             </div>
+             <div id="errorMessage" class="error-message" aria-live="assertive"></div>
+
+             <div id="summaryView" class="hidden text-center mt-8">
+                 <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4">Drill Complete!</h2>
+                 <p class="text-gray-600 dark:text-gray-400 mb-4">Here are the sentences you practiced:</p>
+                 <ul id="sessionRecapList" class="text-left max-w-lg mx-auto bg-white dark:bg-gray-700 p-6 rounded-lg shadow-sm space-y-2 mb-6 border border-gray-200 dark:border-gray-600">
+                     <!-- Sentences will be added here -->
+                 </ul>
+                 <button type="button" id="playAgainButton" class="button bg-green-600 hover:bg-green-700 text-lg px-8 py-3">Play Again</button>
+             </div>
+        </main>
+    </div>
+</div>
+<audio id="beepSound" src="sounds/beep.wav" preload="auto"></audio>
+<script src="script.js" defer></script>
+</body>
+</html>

@@ -7,11 +7,12 @@ This repository is a static web app with no backend build system.
 - `script.js`: core application logic (audio, builder flow, player flow, presets).
 - `style.css`: custom styling, animations, and component overrides.
 - `images/`: production image assets.
+- `sounds/`: local audio assets used by cue playback (`beep.wav`).
 - `nanobanana-output/`: generated asset output files.
 - `README.md`: product overview and usage notes.
 - `GEMINI.md`: developer context and architecture notes.
 
-Keep feature logic grouped in `script.js` by namespace-style sections (`DrillAudio`, builder/player behavior), and place new static assets under `images/`.
+Keep feature logic grouped in `script.js` by namespace-style sections (`DrillAudio`, builder/player behavior), and place media assets under `images/` or `sounds/` by type.
 
 ## Build, Test, and Development Commands
 No compile step is required.
@@ -41,7 +42,7 @@ There is currently no automated test framework in this repository. Validate chan
 For bug fixes, include reproducible steps in the PR and verify the fix in at least one Chromium-based browser.
 
 ## Commit & Pull Request Guidelines
-The current workspace snapshot does not include `.git` history. Use this convention going forward:
+This repository is tracked in Git and published on GitHub. Use this convention:
 
 - Commit format: `type(scope): short imperative summary` (for example, `feat(player): add recap clear button`).
 - Branch naming: `feature/<topic>`, `fix/<topic>`, `chore/<topic>`.
